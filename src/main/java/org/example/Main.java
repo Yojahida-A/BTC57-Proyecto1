@@ -3,7 +3,7 @@ package org.example;
 import org.example.negocio.AccountType;
 import org.example.persistencia.BankService;
 
-
+//The BankService class is instantiated to manage customers and accounts.
 public class Main {
     public static void main(String[] args) {
         BankService bankService = new BankService();
