@@ -1,0 +1,80 @@
+CREATE DATABASE BankDB;
+
+-- La creación de tablas y sus campos se sugirió generarlos en inglés.
+CREATE TABLE Client (
+    ClientId INT IDENTITY(1,1) PRIMARY KEY,
+    FirstName NVARCHAR(50) NOT NULL,
+    LastName NVARCHAR(50) NOT NULL,
+    DNI NVARCHAR(8) UNIQUE NOT NULL,
+    Email NVARCHAR(100) NOT NULL,
+    CONSTRAINT CK_Email CHECK (Email LIKE '%_@__%.__%') 
+);
+
+CREATE TABLE BankAccount (
+    AccountId INT IDENTITY(1,1) PRIMARY KEY, 
+    AccountNumber NVARCHAR(50) UNIQUE NOT NULL, 
+    Balance FLOAT DEFAULT 0.0 NOT NULL,
+    AccountType NVARCHAR(10) CHECK (AccountType IN ('SAVINGS', 'CHECKING')) NOT NULL, 
+    ClientId INT NOT NULL, 
+    CONSTRAINT FK_ClientId FOREIGN KEY (ClientId) REFERENCES Client(ClientId) ON DELETE CASCADE,  
+    CONSTRAINT CK_Balance CHECK (
+        (AccountType = 'SAVINGS' AND Balance >= 0) OR  
+        (AccountType = 'CHECKING' AND Balance >= -500) 
+    )
+);
+
+--Inserción de datos en la tabla Client
+
+INSERT INTO Client (FirstName, LastName, DNI, Email)
+VALUES 
+('Yojahida', 'Arroyo', '45293103', 'yojahidaa@gmail.com'),
+('Jhon', 'Ramos', '46807374', 'jhon24@gmail.com'),
+('Arturo', 'Rojas', '23206179', 'artrojas@hotmail.com'),
+('Lucia', 'Gómez', '23258942', 'lucia.gomez@hotmail.com'),
+('Mónica', 'Palomino', '46502300', 'mpalomino@hotmail.com'),
+('Juana', 'Toribio', '43507394', 'toribio@gmail.com'),
+('Javier', 'Montalvo', '40944112', 'jmontalvo@gmail.com');
+
+
+INSERT INTO BankAccount (AccountNumber, Balance, AccountType, ClientId)
+VALUES 
+('111238567890', 800.00, 'SAVINGS', 1), 
+('111239567891', -200.00, 'CHECKING', 1),
+('111207567875', -300.00, 'CHECKING', 2), 
+('112343367892', 1500.00, 'SAVINGS', 4), 
+('111204567893', 0.00, 'CHECKING', 3), 
+('111297567831', -400.00, 'CHECKING', 1),
+('111292387830', 2000.00, 'SAVINGS', 7);
+
+--Consulta de cuentas de un cliente específico.
+
+SELECT 
+    Cl.FirstName,
+    Cl.LastName,
+    Cl.DNI,
+    Ac.AccountNumber,
+    Ac.Balance,
+    Ac.AccountType
+FROM 
+    Client Cl
+JOIN 
+    BankAccount Ac
+ON 
+    Cl.ClientId = Ac.ClientId
+WHERE 
+    Cl.DNI = '45293103';
+
+--Seleción de campos de la tabla cliente
+	
+	select FirstName,LastName,DNI,Email from Client
+
+--Seleción de campos dela tabla BankAccount
+
+	select AccountId,AccountNumber,Balance,AccountType from BankAccount
+	
+--Actulización de Email de un cliente
+UPDATE Client
+SET Email = '45293103@contienental.edu.pe'  
+WHERE DNI = '45293103';
+
+SELECT FirstName,LastName,DNI,Email FROM Client
